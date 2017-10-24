@@ -24,7 +24,7 @@ Item {
     property color colorButtonsPressed: "#ace86c"
     property color colorTextButtons: "black"
     property color colorTextButtonsPressed: "black"
-    property color colorDecorateBorders: Qt.darker(colorBackground, 1.5)
+    property color colorDecorateBorders: Qt.darker(colorBackground, 1.2)
     property bool decorateBorders: false
     property int decorateBordersWidth: 2
     property int decorateBordersRadius: 0
@@ -314,20 +314,18 @@ Item {
         anchors.topMargin:  getTopMargin()
         anchors.bottomMargin: getBottomMargin()
         color: colorDecorateBorders
-        border.color: Qt.darker(color, 1.5)
-        border.width: 1
         Rectangle {
             id: backgroundLayer
             anchors.fill: parent
             anchors.margins: decorateBorders ? decorateBordersWidth : 0
             radius: !decorateBorders ? parent.radius : 0
-            color: colorBackground
-            clip: true
-            antialiasing: parent.antialiasing
+            color: colorBackground            
+            antialiasing: control_root.antialiasing
             Item {
                 id: display
                 z: 3
                 anchors.fill: parent
+                clip: true
                 visible: !input.activeFocus
                 Text {
                     id: displayText
