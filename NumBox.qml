@@ -25,8 +25,8 @@ Item {
     property color colorTextButtons: "black"
     property color colorTextButtonsPressed: "black"
     property color colorDecorateBorders: Qt.darker(colorBackground, 1.2)
-    property bool decorateBorders: false
-    property int decorateBordersWidth: 2
+    property bool decorateBorders: true
+    property int decorateBordersWidth: 1
     property int decorateBordersRadius: 0
     property int buttonsAlignType: 0                        /* Тип выравнивания управляющих кнопок
                                                                 ( 0 - отключить показ; 1 - слева и справа; 2 - только справа на 2 клетки; 3 - только справа на 1 клетку; 4 - сверху и снизу;) */
@@ -54,7 +54,7 @@ Item {
     property string labelButtonDown: "-"              // текст кнопки уменьшения значения на шаг приращения
 
 	/* Функциональные параметры */
-    property bool editable: true                // Включить возможность ввода с клавиатуры
+    property bool editable: false               // Включить возможность ввода с клавиатуры
     property bool doubleClickEdit: false 		// Опция: редактировать только при двойном клике (если включен параметр editable)
     property bool enableEditPanel: false 		/* Опция: отправка сигнала showCustomEditPanel начала редактирования вместо редактирования
      												(например если имеется своя виртуальная клавиатура ввода, если включен параметр editable) */
