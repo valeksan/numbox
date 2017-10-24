@@ -1,7 +1,4 @@
-import QtQuick 2.7
-import QtQuick.Controls 2.2
-import QtQml 2.2
-
+import QtQuick 2.2
 
 Item {
 	id: control_root
