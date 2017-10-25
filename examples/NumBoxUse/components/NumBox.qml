@@ -95,9 +95,11 @@ Item {
         enabled: enableMouseWheel
         onWheel: {
             if (wheel.angleDelta.y < 0) {
-                parent.down()                
+                if(!control_root.editing) parent.down();
+                else input_area.decreaseInEditMode();
             } else {
-                parent.up()                
+                if(!control_root.editing) parent.up();
+                else input_area.increaseInEditMode();
             }
         }
     }
@@ -159,7 +161,7 @@ Item {
             return (prefix + textFromValue(value, precision) + suffix);
         }
         return "";
-    }
+    }    
     // Преобразование текста в число по формату дефолтной локали окружения
     function valueFromText(text) {
         var doteSymbol = getSystemLocaleDecimalChar();
@@ -326,7 +328,7 @@ Item {
             color: colorBackground            
             antialiasing: control_root.antialiasing
             Item {
-                id: display
+                id: display                
                 z: 3
                 anchors.fill: parent
                 clip: true
@@ -379,6 +381,33 @@ Item {
             }
             Item {
                 id: input_area
+                // Приращение в режиме ввода
+                function decreaseInEditMode() {
+                    var numberStr, number;
+                    if(input.text.length === 0) {
+                        numberStr = placeholder.text
+                    } else {
+                        numberStr = input.text
+                    }
+                    number = fixValue((valueFromText(numberStr) - step), precision);
+                    if(number >= minimumValue) {
+                        input.text = textFromValue(number, precision);
+                    }
+                    console.log("decr")
+                }
+                function increaseInEditMode() {
+                    var numberStr, number;
+                    if(input.text.length === 0) {
+                        numberStr = placeholder.text
+                    } else {
+                        numberStr = input.text
+                    }
+                    number = fixValue((valueFromText(numberStr) + step), precision);
+                    if(number <= maximumValue) {
+                        input.text = textFromValue(number, precision);
+                    }
+                    console.log("incr")
+                }
                 visible: !display.visible
                 z: 2
                 anchors.fill: parent
@@ -478,6 +507,13 @@ Item {
                             display.forceActiveFocus()
                             control_root.editEnd()                            
                         }
+//                        onWheel: {
+//                            if (wheel.angleDelta.y < 0) {
+//                                input_area.decreaseInEditMode();
+//                            } else {
+//                                input_area.decreaseInEditMode();
+//                            }
+//                        }
                     }
                 }
                 Text {
