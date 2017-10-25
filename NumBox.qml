@@ -73,7 +73,8 @@ Item {
 	/* Функциональные сигналы*/
     signal finishEdit(var number);              // Сигнал на изменение хранимого реального значения (закомментировать или переопределить обработчик onFinishEdit если сигнал должен обрабатываться как-то по особенному)
     signal showCustomEditPanel(var name, var current); // Сигнал для нужд коннекта к своей клавиатуре ввода (для связи: имя контрола, текущее значение)
-    signal clicked();                           // Сигнал посылается при слике на контрол если параметр editable=false, либо включен параметр doubleClickEdit
+    signal clicked();                           // Сигнал посылается при клике на контрол
+    signal doubleClicked();                     // Сигнал посылается при двойном клике на контрол
     signal editStart();                         // Началось редактирование с клавиатуры
     signal editEnd();                           // Закончилось редактирование с клавиатуры
     signal up();                                // Сигнал посылается при нажатии кнопки увеличения числа на step (+)
@@ -335,28 +336,28 @@ Item {
                     verticalAlignment: Qt.AlignVCenter
                     anchors.fill: parent
                 }
-                MouseArea {
-                    enabled: control_root.editable
+                MouseArea {                    
                     anchors.fill: parent
                     onClicked: {
+                        control_root.clicked()
                         if(!control_root.doubleClickEdit) {
                             if(control_root.editable) {
                                 if(!control_root.enableEditPanel) {
                                     input.forceActiveFocus()
                                     control_root.editStart()
                                 } else {
-                                    control_root.editStart()
-                                    control_root.showCustomEditPanel(control_root.name, control_root.value)
+                                    if(control_root.editable) {
+                                        control_root.editStart()
+                                        control_root.showCustomEditPanel(control_root.name, control_root.value)
+                                    }
                                 }
-                            } else {
-                                control_root.clicked()
                             }
-                        } else {
-                            control_root.clicked()
+                        } else {                            
                             mouse.accepted = false
                         }
                     }
                     onDoubleClicked: {
+                        control_root.doubleClicked()
                         if(control_root.doubleClickEdit) {
                             if(control_root.editable) {
                                 if(!control_root.enableEditPanel) {
@@ -366,8 +367,6 @@ Item {
                                     control_root.editStart()
                                     control_root.showCustomEditPanel(control_root.name, control_root.value)
                                 }
-                            } else {
-                                control_root.clicked()
                             }
                         } else {
                             mouse.accepted = false
