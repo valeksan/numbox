@@ -2,6 +2,18 @@ import QtQuick 2.2
 
 Item {
 	id: control_root
+
+    /* Внимание! Чтобы контрол работал, необходимо прописать слот на сигнал finishEdit(number)
+      Пример:
+        NumBox {
+            value: 0
+            // ...
+            onFinishEdit: {
+                control_root.value = number
+            }
+        }
+    */
+
     property string name    // [Опционально] Имя контрола (нужен если включен параметр enableEditPanel)
 
 	/* Размеры */
@@ -80,13 +92,6 @@ Item {
     signal editEnd();                           // Закончилось редактирование с клавиатуры
     signal up();                                // Сигнал посылается при нажатии кнопки увеличения числа на step (+)
     signal down();                              // Сигнал посылается при нажатии кнопки уменьшения числа на step (-)
-
-    /* Обработчик сохранения ввода (по умолчанию) */
-    onFinishEdit: {
-        // можно переопределить
-        control_root.value = number
-        //console.log(number)
-    }
 
     /* Обработка колеса мыши */
     MouseArea {
@@ -393,7 +398,6 @@ Item {
                     if(number >= minimumValue) {
                         input.text = textFromValue(number, precision);
                     }
-                    console.log("decr")
                 }
                 function increaseInEditMode() {
                     var numberStr, number;
@@ -406,7 +410,6 @@ Item {
                     if(number <= maximumValue) {
                         input.text = textFromValue(number, precision);
                     }
-                    console.log("incr")
                 }
                 visible: !display.visible
                 z: 2

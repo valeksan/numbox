@@ -31,6 +31,10 @@ ApplicationWindow {
                 decorateBorders: chkDecorateBorders.checked
                 memory: 3.8
                 doubleClickEdit: chk2click.checked
+                onFinishEdit: {
+                    // если так не написать, ничего не будет изменяться!
+                    value = number
+                }
             }
             CheckBox {
                 id: chkDecorateBorders
