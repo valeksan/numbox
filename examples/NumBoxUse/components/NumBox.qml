@@ -86,8 +86,8 @@ Item {
 	/* Функциональные сигналы*/
     signal finishEdit(var number);              // Сигнал на изменение хранимого реального значения (закомментировать или переопределить обработчик onFinishEdit если сигнал должен обрабатываться как-то по особенному)
     signal showCustomEditPanel(var name, var current); // Сигнал для нужд коннекта к своей клавиатуре ввода (для связи: имя контрола, текущее значение)
-    signal clicked();                           // Сигнал посылается при клике на контрол
-    signal doubleClicked();                     // Сигнал посылается при двойном клике на контрол
+    signal clicked(var mouse);                  // Сигнал посылается при клике на контрол
+    signal doubleClicked(var mouse);            // Сигнал посылается при двойном клике на контрол
     signal editStart();                         // Началось редактирование с клавиатуры
     signal editEnd();                           // Закончилось редактирование с клавиатуры
     signal up();                                // Сигнал посылается при нажатии кнопки увеличения числа на step (+)
@@ -349,7 +349,7 @@ Item {
                 MouseArea {                    
                     anchors.fill: parent
                     onClicked: {
-                        control_root.clicked()
+                        control_root.clicked(mouse)
                         if(!control_root.doubleClickEdit) {
                             if(control_root.editable) {
                                 if(!control_root.enableEditPanel) {
@@ -367,7 +367,7 @@ Item {
                         }
                     }
                     onDoubleClicked: {
-                        control_root.doubleClicked()
+                        control_root.doubleClicked(mouse)
                         if(control_root.doubleClickEdit) {
                             if(control_root.editable) {
                                 if(!control_root.enableEditPanel) {
