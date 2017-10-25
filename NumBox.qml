@@ -58,13 +58,14 @@ Item {
     property bool doubleClickEdit: false 		// Опция: редактировать только при двойном клике (если включен параметр editable)
     property bool enableEditPanel: false 		/* Опция: отправка сигнала showCustomEditPanel начала редактирования вместо редактирования
      												(например если имеется своя виртуальная клавиатура ввода, если включен параметр editable) */
+    property bool enableMouseWheel: (buttonsAlignType !== 0) // Разрешить приращение значения по step колесом мыши (по умолчанию вкл. если видны кнопки)
     property alias editing: input_area.visible 	// Только для чтения: идет редактирование (флаг)
 
 	/* Параметры чисел */
 	property int precision: 2 					// Точность  
     property double value: 0.0                  // Действительное значение
     property var memory: undefined              // Хранимое в памяти значение
-    property double step: 0.5                   // Действительный шаг приращения
+    property double step: 0.0                   // Действительный шаг приращения
     property bool enableSequenceGrid: false 	// Включить сетку разрешенных значений по шагу step
     property double minimumValue: -3.40282e+038/2.0 // Действительный минимальный предел (включительно)
     property double maximumValue: 3.40282e+038/2.0	// Действительный максимальный предел (включительно)
