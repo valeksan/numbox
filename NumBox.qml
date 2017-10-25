@@ -474,8 +474,7 @@ Item {
                         //console.log("Key "+/*String.fromCharCode*/(event.key)+" pressed")
                     }
 
-                    onTextChanged: {
-                        console.log(text)
+                    onTextChanged: {                        
                         var number = valueFromText(text)
                         if(number > maximumValue) {
                             ++counterToUpErrors;
@@ -510,13 +509,6 @@ Item {
                             display.forceActiveFocus()
                             control_root.editEnd()                            
                         }
-//                        onWheel: {
-//                            if (wheel.angleDelta.y < 0) {
-//                                input_area.decreaseInEditMode();
-//                            } else {
-//                                input_area.decreaseInEditMode();
-//                            }
-//                        }
                     }
                 }
                 Text {
