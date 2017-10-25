@@ -91,6 +91,8 @@ Item {
     /* Обработка колеса мыши */
     MouseArea {
         anchors.fill: parent
+        acceptedButtons: Qt.NoButton
+        enabled: enableMouseWheel
         onWheel: {
             if (wheel.angleDelta.y < 0) {
                 parent.down()                
