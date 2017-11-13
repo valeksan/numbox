@@ -19,7 +19,7 @@ Item {
 	/* Размеры */
     width: 180
     height: 46
-    property int widthButtons: 50
+    property int widthButtons: height*1.618033988749
     property int widthButtonUp: (buttonsAlignType !== 4) ? widthButtons : width
     property int widthButtonDown: (buttonsAlignType !== 4) ? widthButtons : width
     property int widthSpaces: 3
@@ -75,6 +75,7 @@ Item {
 
 	/* Параметры чисел */
 	property int precision: 2 					// Точность  
+    property int decimals: precision            // Сколько знаков после запятой отображать (в режиме отображения действующего значения)
     property double value: 0.0                  // Действительное значение
     property var memory: undefined              // Хранимое в памяти значение
     property double step: 0.0                   // Действительный шаг приращения
@@ -163,7 +164,7 @@ Item {
     /* Cистемные методы (не используемые извне) */
     function getDisplayValueString() {
         if(value.toString().length > 0) {
-            return (prefix + textFromValue(value, precision) + suffix);
+            return (prefix + textFromValue(value, decimals) + suffix);
         }
         return "";
     }    
