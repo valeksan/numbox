@@ -118,7 +118,7 @@ Item {
     onDown: {
         // можно переопределить
         decrease();
-    }    
+    }
 
     /* Методы */
     // Послать сигнал на уменьшение значения на step
@@ -163,7 +163,7 @@ Item {
     // -------------------------------------------------------------------------------------------
     /* Cистемные методы (не используемые извне) */
     function getDisplayValueString() {
-        if(value.toString().length > 0) {
+        if(value.toString().length > 0) {            
             return (prefix + textFromValue(value, decimals) + suffix);
         }
         return "";
@@ -254,6 +254,23 @@ Item {
             display.forceActiveFocus()
             input.text = ""
         }
+    }
+    function appendArithmeticalMeanValue()
+    {
+        if(arithmeticalMeanStackSize > 1) {
+            if(__arithmeticalMeanStack.length >= arithmeticalMeanStackSize && __arithmeticalMeanStack.length !== 0) {
+                __arithmeticalMeanStack.shift();
+
+            }
+            __arithmeticalMeanStack.push(value);
+        }
+    }
+    function meanValue() {
+        var sum = 0;
+        for(var i=0; i<__arithmeticalMeanStack.length; i++) {
+            sum = fixValue(sum + __arithmeticalMeanStack[i], precision);
+        }
+        return fixValue(sum/__arithmeticalMeanStack.length, precision);
     }
 
     /* Обработчик исправления ввода FIX_1 (системное) */

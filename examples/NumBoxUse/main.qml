@@ -6,8 +6,8 @@ import "components" as Components
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 580
+    width: 1000
+    height: 900
     title: qsTr("Пример")
 
     RowLayout {
@@ -20,32 +20,92 @@ ApplicationWindow {
                 height: 45
                 width: 200
                 value: 0.0
-                precision: 2
+                buttonsAlignType: 2
+                precision: precision_setter.value
                 minimumValue: 0.0
                 maximumValue: 104.75
                 enableSequenceGrid: chkEnableSeqGrid.checked //
-                step: 0.05
+                step: step_setter.value
                 editable: chkEditable.checked                
                 suffix: " dB"
                 fixed: chkFixedZeros.checked
+                decimals: decimals_setter.value
                 decorateBorders: chkDecorateBorders.checked
                 memory: 3.8
                 doubleClickEdit: chk2click.checked
+                widthButtons: 45
                 onFinishEdit: {
                     // если так не написать, ничего не будет изменяться!
                     value = number
                 }
             }
             CheckBox {
-                id: chkDecorateBorders
-                text: "Окантовка"
-                checked: true
-            }
-            CheckBox {
                 id: chkFixedZeros
                 text: "Фиксированное отображение нулей"
                 checked: false
             }
+            Row {
+                spacing: 15
+                Label {
+                    text:"Количество отображаемых чисел:"
+                    verticalAlignment: "AlignVCenter"
+                    height: parent.height
+                }
+                SpinBox {
+                    id: decimals_setter
+                    from: 0
+                    to: 10
+                    value: 0
+                }
+            }
+            Row {
+                spacing: 15
+                Label {
+                    text:"Точность:"
+                    verticalAlignment: "AlignVCenter"
+                    height: parent.height
+                }
+                SpinBox {
+                    id: precision_setter
+                    from: 0
+                    to: 10
+                    value: 0
+                }
+            }
+            Row {
+                spacing: 15
+                Label {
+                    text:"Шаг:"
+                    verticalAlignment: "AlignVCenter"
+                    height: parent.height
+                }
+                Components.NumBox {
+                    id: step_setter // установщик шага
+                    height: 45
+                    width: 200
+                    value: 0.05
+                    buttonsAlignType: 1
+                    precision: precision_setter.value
+                    minimumValue: 0.0
+                    maximumValue: 100.0
+                    step: Math.pow(10,-(precision))
+                    editable: true
+                    fixed: true
+                    //decorateBorders: chkDecorateBorders.checked
+                    //doubleClickEdit: chk2click.checked
+                    widthButtons: 45
+                    onFinishEdit: {
+                        value = number
+                    }
+                }
+            }
+
+            CheckBox {
+                id: chkDecorateBorders
+                text: "Окантовка"
+                checked: true
+            }
+
             CheckBox {
                 id: chkEnableSeqGrid
                 text: "Включить привязку к сетке шага "+superRealSpinBox.step.toString()+" (можно поменять в коде)"
@@ -69,7 +129,6 @@ ApplicationWindow {
             Column {
                 id: groupNumBoxTypes
                 RadioButton {
-                    checked: true
                     text: "0"
                     onCheckedChanged: {
                         if(checked === true) superRealSpinBox.buttonsAlignType = 0
@@ -83,6 +142,7 @@ ApplicationWindow {
                 }
                 RadioButton {
                     text: "2"
+                    checked: true
                     onCheckedChanged: {
                         if(checked === true) superRealSpinBox.buttonsAlignType = 2
                     }
