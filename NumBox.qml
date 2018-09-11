@@ -58,8 +58,10 @@ Item {
     }
 
     /* Дополнительные информационные строки */
-    property string suffix: ""                  // текст который идет сразу за выводом числа (например можно указать единицу измерения)
-    property string prefix: ""                  // текст который идет сразу перед выводом числа    
+    property string suffix: ""                  // текст который идет сразу за выводом числа (например можно указать единицу измерения) - "суфикс"
+    property string prefix: ""                  // текст который идет сразу перед выводом числа - "префикс"
+    property bool visibleSuffixInEdit: true     // показывать "суфикс" при редактировании
+    property bool visiblePrefixInEdit: false    // показывать "префикс" при редактировании
 
     /* Названия кнопок шагового приращения -/+ */
     property string labelButtonUp: "+"                // текст кнопки увеличения значения на шаг приращения
@@ -163,7 +165,7 @@ Item {
     // -------------------------------------------------------------------------------------------
     /* Cистемные методы (не используемые извне) */
     function getDisplayValueString() {
-        if(value.toString().length > 0) {            
+        if(value.toString().length > 0) {
             return (prefix + textFromValue(value, decimals) + suffix);
         }
         return "";
@@ -171,13 +173,15 @@ Item {
     // Преобразование текста в число по формату дефолтной локали окружения
     function valueFromText(text) {
         var doteSymbol = getSystemLocaleDecimalChar();
+//        console.log(doteSymbol)
         var index_dote = -1;
         index_dote = text.indexOf(".");
         if(index_dote === -1) {
             index_dote = text.indexOf(",");
         }
-        if(index_dote !== -1 && doteSymbol !== '.') {
-            text = text.replace(doteSymbol,'.')
+//        console.log(index_dote)
+        if(index_dote !== -1) {
+            text = text.replace(',','.');
         }
         return parseFloat(text);
     }
@@ -232,27 +236,28 @@ Item {
     // Завершение редактирования метод
     function valueEditFinisher() {
         if(input.text.length > 0) {
-            var rValue = valueFromText(input.text)
-            var newValue = valueFromText(placeholder.text)
+            var rValue = valueFromText(input.text);
+            //console.log(rValue);
+            var newValue = valueFromText(placeholder.text);
             if(rValue !== newValue) {
                 if(control_root.enableSequenceGrid) {
                     // проверка на кратность
                     if(isNumberInSequenceGrid(control_root.step, rValue, control_root.precision)) {
-                        control_root.finishEdit(rValue)
+                        control_root.finishEdit(rValue);
                     } else {
                         // преобразование к кратному числу
                         var conv_value = adj(rValue);
                         if(conv_value > control_root.maximumValue) conv_value -= control_root.step;
-                        conv_value = fixValue(conv_value, control_root.precision)
-                        control_root.finishEdit(conv_value)
+                        conv_value = fixValue(conv_value, control_root.precision);
+                        control_root.finishEdit(conv_value);
                     }
                 } else {
-                    control_root.finishEdit(rValue)
+                    control_root.finishEdit(rValue);
                 }
             }
-            control_root.editEnd()
-            display.forceActiveFocus()
-            input.text = ""
+            control_root.editEnd();
+            display.forceActiveFocus();
+            input.text = "";
         }
     }
     function appendArithmeticalMeanValue()
@@ -277,7 +282,7 @@ Item {
     onEnableSequenceGridChanged: {
         if(enableSequenceGrid) {
             if(!isNumberInSequenceGrid(step,value,precision)) {
-                finishEdit(adj(value))
+                finishEdit(adj(value));
             }
         }
     }
@@ -312,6 +317,7 @@ Item {
         TextEdit {
             id: helper
             text: ""
+            visible: false
         }
     }
 
@@ -457,6 +463,7 @@ Item {
                     horizontalAlignment: Qt.AlignHCenter
                     verticalAlignment: Qt.AlignVCenter
                     readOnly: !control_root.editable
+                    inputMethodHints: Qt.ImhFormattedNumbersOnly
                     validator: DoubleValidator {
                         id: defaultValidator
                         bottom: minimumValue
@@ -478,8 +485,14 @@ Item {
                         }
                     }
                     Keys.onReleased: {
-                        if(event.key === Qt.Key_M && memory !== undefined) {
-                            input.text = textFromValue(memory, precision)
+                        if(event.key === Qt.Key_M) {
+                            if(memory !== undefined)
+                                input.text = textFromValue(memory, precision);
+
+                        } else if(event.key === Qt.Key_S) {
+                            if(input.text.length > 0) {
+                                memory = valueFromText(input.text);
+                            }
                         } else if(event.key === Qt.Key_C) {
                             input.text = ""
                         } else if(event.key === 46 || event.key === 44) {
@@ -494,6 +507,7 @@ Item {
 
                     onTextChanged: {                        
                         var number = valueFromText(text)
+//                        console.log(number)
                         if(number > maximumValue) {
                             ++counterToUpErrors;
                             if(counterToUpErrors < 2) {
@@ -550,7 +564,7 @@ Item {
                 }
                 Text {
                     id: pre
-                    visible: input.visible
+                    visible: visiblePrefixInEdit ? input.visible : false
                     text: control_root.prefix
                     font.pixelSize: 10
                     verticalAlignment: Qt.AlignVCenter
@@ -563,7 +577,7 @@ Item {
                     id: suf
                     text: control_root.suffix
                     font.pixelSize: 10
-                    visible: input.visible
+                    visible: visibleSuffixInEdit ? input.visible : false
                     verticalAlignment: Qt.AlignVCenter
                     anchors.right: parent.right
                     anchors.rightMargin: 5
