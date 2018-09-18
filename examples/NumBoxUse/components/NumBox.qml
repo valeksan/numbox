@@ -1,22 +1,29 @@
 import QtQuick 2.2
 
 Item {
-	id: control_root
+    id: control_root
 
     /* Внимание! Чтобы контрол работал, необходимо прописать слот на сигнал finishEdit(number)
-      Пример:
+      // Пример:
         NumBox {
             value: 0
             // ...
             onFinishEdit: {
-                control_root.value = number
+                control_root.value = number;
             }
         }
+      // Можно также переопределить метод отображения контрола, добавив внутри него следующее
+            Component.onCompleted: {
+                displayTextValue = Qt.binding(function() {
+                    return (prefix + value/60+":"+(value%60<10?"0"+value%60:value%60) + suffix); // для того чтобы отобразить время в минутах и секундах
+                });
+            }
+            editable: true // чаще всего все это требуется с этим параметром - без ввода (но это не точно, как вам угодно)
     */
 
     property string name    // [Опционально] Имя контрола (нужен если включен параметр enableEditPanel)
 
-	/* Размеры */
+    /* Размеры */
     width: 180
     height: 46
     property int widthButtons: height*1.618033988749
@@ -37,6 +44,12 @@ Item {
     property color colorTextButtons: "black"
     property color colorTextButtonsPressed: "black"
     property color colorDecorateBorders: Qt.darker(colorBackground, 1.2)
+    property color colorMainPartOfValue: "transparent"  // цвет целой части
+    property color colorFractionPartOfValue: "transparent"    // цвет дробной части
+    property color colorDotePartOfValue: colorFractionPartOfValue        // цвет точки (по умолчанию заимствует цвет дробной части)
+    property color colorSuffix: "transparent"
+    property color colorPrefix: "transparent"
+
     property bool decorateBorders: true
     property int decorateBordersWidth: 1
     property int decorateBordersRadius: 0
@@ -62,31 +75,33 @@ Item {
     property string prefix: ""                  // текст который идет сразу перед выводом числа - "префикс"
     property bool visibleSuffixInEdit: true     // показывать "суфикс" при редактировании
     property bool visiblePrefixInEdit: false    // показывать "префикс" при редактировании
+    property bool isBoldMainPartOfValue: false      // увеличить жирность числителя в дробных чисел на вывод
 
-    /* Названия кнопок шагового приращения -/+ */
-    property string labelButtonUp: "+"                // текст кнопки увеличения значения на шаг приращения
-    property string labelButtonDown: "-"              // текст кнопки уменьшения значения на шаг приращения
+    /* Названия кнопок шагового приращения -/+  */
+    property string labelButtonUp: "+"          // текст кнопки увеличения значения на шаг приращения
+    property string labelButtonDown: "-"        // текст кнопки уменьшения значения на шаг приращения
 
-	/* Функциональные параметры */
+    /* Функциональные параметры */
     property bool editable: false               // Включить возможность ввода с клавиатуры
-    property bool doubleClickEdit: false 		// Опция: редактировать только при двойном клике (если включен параметр editable)
-    property bool enableEditPanel: false 		/* Опция: отправка сигнала showCustomEditPanel начала редактирования вместо редактирования
-     												(например если имеется своя виртуальная клавиатура ввода, если включен параметр editable) */
+    property bool doubleClickEdit: false        // Опция: редактировать только при двойном клике (если включен параметр editable)
+    property bool enableEditPanel: false        /* Опция: отправка сигнала showCustomEditPanel начала редактирования вместо редактирования
+                                                     (например если имеется своя виртуальная клавиатура ввода, если включен параметр editable) */
     property bool enableMouseWheel: (buttonsAlignType !== 0) // Разрешить приращение значения по step колесом мыши (по умолчанию вкл. если видны кнопки)
-    property alias editing: input_area.visible 	// Только для чтения: идет редактирование (флаг)
+    property alias editing: input_area.visible     // Только для чтения: идет редактирование (флаг)
 
-	/* Параметры чисел */
-	property int precision: 2 					// Точность  
+    /* Параметры чисел */
+    property string displayTextValue: getDisplayValueString()
+    property int precision: 2                   // Точность
     property int decimals: precision            // Сколько знаков после запятой отображать (в режиме отображения действующего значения)
     property double value: 0.0                  // Действительное значение
     property var memory: undefined              // Хранимое в памяти значение
     property double step: 0.0                   // Действительный шаг приращения
-    property bool enableSequenceGrid: false 	// Включить сетку разрешенных значений по шагу step
+    property bool enableSequenceGrid: false     // Включить сетку разрешенных значений по шагу step
     property double minimumValue: -3.40282e+038/2.0 // Действительный минимальный предел (включительно)
-    property double maximumValue: 3.40282e+038/2.0	// Действительный максимальный предел (включительно)
+    property double maximumValue: 3.40282e+038/2.0    // Действительный максимальный предел (включительно)
     property bool fixed: false                  // Показывать лишние нули в дробной части под точность
 
-	/* Функциональные сигналы*/
+    /* Функциональные сигналы*/
     signal finishEdit(var number);              // Сигнал на изменение хранимого реального значения (закомментировать или переопределить обработчик onFinishEdit если сигнал должен обрабатываться как-то по особенному)
     signal showCustomEditPanel(var name, var current); // Сигнал для нужд коннекта к своей клавиатуре ввода (для связи: имя контрола, текущее значение)
     signal clicked(var mouse);                  // Сигнал посылается при клике на контрол
@@ -145,11 +160,11 @@ Item {
     }
     // Отправить сигнал на замену действующего значения значением из памяти
     function loadValueFromMemory() {
-        finishEdit(memory)
+        finishEdit(memory);
     }
     // Копировать значение в буфер обмена
     function copy() {
-        clipboard.copy(textFromValue(value, precision))
+        clipboard.copy(textFromValue(value, precision));
     }
     // Вставить значение из буфера обмена в сигнал установки действующего значения
     function past() {
@@ -164,9 +179,12 @@ Item {
 
     // -------------------------------------------------------------------------------------------
     /* Cистемные методы (не используемые извне) */
+    // Метод отображения (который всеже можно переопределить извне, показывать так как нужно)
     function getDisplayValueString() {
         if(value.toString().length > 0) {
-            return (prefix + textFromValue(value, decimals) + suffix);
+            var prefixFull = isColorEmpty(colorPrefix) ? prefix : "<font color=\""+colorPrefix+"\">"+prefix+"</font>";
+            var suffixFull = isColorEmpty(colorSuffix) ? suffix : "<font color=\""+colorSuffix+"\">"+suffix+"</font>";
+            return (prefixFull + textFromValue(value, decimals) + suffixFull);
         }
         return "";
     }    
@@ -189,11 +207,13 @@ Item {
         var doteSymbol = getSystemLocaleDecimalChar();
         var index_dote = -1;
         var text = number.toFixed(precision);
+        var i;
         if(doteSymbol !== '.') {
             text = text.replace('.', doteSymbol);
         }
+        index_dote = text.indexOf(doteSymbol);
         if(!fixed && precision > 0) {
-            for(var i=0; i<precision+1; i++) {
+            for(i=0; i<precision+1; i++) {
                 if(text.charAt(text.length-i-1) !== '0') {
                     text = text.substr(0, text.length-i);
                     break;
@@ -203,6 +223,38 @@ Item {
                 text = text.substring(0, text.length-1);
             }
         }
+        if(isBoldMainPartOfValue && text.length > 0) {
+            if(index_dote !== -1) {
+                text = [ text.slice(0,index_dote), "</strong>", text.slice(index_dote) ].join('');
+                text = "<strong>" + text;
+            } else {
+                text = "<strong>" + text + "</strong>";
+            }
+        }
+        if(!isColorEmpty(colorMainPartOfValue)) {
+            index_dote = text.indexOf(doteSymbol);
+            if(index_dote !== -1) {
+                text = [ text.slice(0,index_dote), "</font>", text.slice(index_dote) ].join('');
+                text = "<font color=\"" + colorMainPartOfValue + "\">" + text;
+            } else {
+                text = "<font color=\"" + colorMainPartOfValue + "\">" + text + "</strong>";
+            }
+        }
+        if(!isColorEmpty(colorFractionPartOfValue)) {
+            index_dote = text.indexOf(doteSymbol);
+            if(index_dote !== -1) {
+                text = [ text.slice(0,index_dote+1), "<font color=\"" + colorFractionPartOfValue + "\">", text.slice(index_dote+1), "</font>" ].join('');
+            }
+        }
+        if(!isColorEmpty(colorDotePartOfValue)) {
+            index_dote = text.indexOf(doteSymbol);
+            if(index_dote !== -1) {
+                text = [ text.slice(0,index_dote), "<font color=\"" + colorDotePartOfValue + "\">", doteSymbol ,text.slice(index_dote+1), "</font>" ].join('');
+            }
+        }
+        if(name === "testOutput")
+            console.log(text);
+
         return text;
     }
     // Отброс незначащей части числа согласно точности
@@ -228,6 +280,10 @@ Item {
     function adj(x) {
         return (Math.round((x-minimumValue)/step)*step + minimumValue);
     }
+    // Проверка цвета на пустоту
+    function isColorEmpty(color_arg) {
+        return Qt.colorEqual(color_arg, "transparent");
+    }
     // Проверка на вхождение числа в диапазон
     function valueInRange(x) {
         if(x >= minimumValue && x <= maximumValue) return true;
@@ -237,7 +293,7 @@ Item {
     function valueEditFinisher() {
         if(input.text.length > 0) {
             var rValue = valueFromText(input.text);
-            //console.log(rValue);
+            console.log(rValue)
             var newValue = valueFromText(placeholder.text);
             if(rValue !== newValue) {
                 if(control_root.enableSequenceGrid) {
@@ -247,7 +303,10 @@ Item {
                     } else {
                         // преобразование к кратному числу
                         var conv_value = adj(rValue);
-                        if(conv_value > control_root.maximumValue) conv_value -= control_root.step;
+
+                        if(conv_value > control_root.maximumValue)
+                            conv_value -= control_root.step;
+
                         conv_value = fixValue(conv_value, control_root.precision);
                         control_root.finishEdit(conv_value);
                     }
@@ -265,7 +324,6 @@ Item {
         if(arithmeticalMeanStackSize > 1) {
             if(__arithmeticalMeanStack.length >= arithmeticalMeanStackSize && __arithmeticalMeanStack.length !== 0) {
                 __arithmeticalMeanStack.shift();
-
             }
             __arithmeticalMeanStack.push(value);
         }
@@ -281,7 +339,7 @@ Item {
     /* Обработчик исправления ввода FIX_1 (системное) */
     onEnableSequenceGridChanged: {
         if(enableSequenceGrid) {
-            if(!isNumberInSequenceGrid(step,value,precision)) {
+            if(!isNumberInSequenceGrid(step, value, precision)) {
                 finishEdit(adj(value));
             }
         }
@@ -290,7 +348,6 @@ Item {
     /* Функционал для работы с буфером обмена */
     Item {
         id: clipboard
-        opacity: 0
         property alias buffer: helper.text
         function copy(text) {
             buffer = text;
@@ -300,19 +357,19 @@ Item {
         function cut(text) {
             buffer = text;
             helper.selectAll();
-            helper.cut()
+            helper.cut();
         }
         function canPast() {
-            return helper.canPaste
+            return helper.canPaste;
         }
         function past() {
             if(helper.canPaste) {
-                buffer = " "
-                helper.selectAll()
+                buffer = " ";
+                helper.selectAll();
                 helper.paste();
                 return buffer;
             }
-            return ""
+            return "";
         }
         TextEdit {
             id: helper
@@ -354,56 +411,57 @@ Item {
             anchors.fill: parent
             anchors.margins: decorateBorders ? decorateBordersWidth : 0
             radius: !decorateBorders ? parent.radius : 0
-            color: colorBackground            
+            color: colorBackground
             antialiasing: control_root.antialiasing
             Item {
-                id: display                
+                id: display
                 z: 3
                 anchors.fill: parent
                 clip: true
                 visible: !input.activeFocus
                 Text {
                     id: displayText
-                    text: getDisplayValueString()
+                    text: displayTextValue //getDisplayValueString()
                     color: control_root.colorValue
                     horizontalAlignment: Qt.AlignHCenter
                     verticalAlignment: Qt.AlignVCenter
                     anchors.fill: parent
+                    //textFormat: Text.StyledText
                 }
-                MouseArea {                    
+                MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        control_root.clicked(mouse)
+                        control_root.clicked(mouse);
                         if(!control_root.doubleClickEdit) {
                             if(control_root.editable) {
                                 if(!control_root.enableEditPanel) {
-                                    input.forceActiveFocus()
-                                    control_root.editStart()
+                                    input.forceActiveFocus();
+                                    control_root.editStart();
                                 } else {
                                     if(control_root.editable) {
-                                        control_root.editStart()
-                                        control_root.showCustomEditPanel(control_root.name, control_root.value)
+                                        control_root.editStart();
+                                        control_root.showCustomEditPanel(control_root.name, control_root.value);
                                     }
                                 }
                             }
-                        } else {                            
-                            mouse.accepted = false
+                        } else {
+                            mouse.accepted = false;
                         }
                     }
                     onDoubleClicked: {
-                        control_root.doubleClicked(mouse)
+                        control_root.doubleClicked(mouse);
                         if(control_root.doubleClickEdit) {
                             if(control_root.editable) {
                                 if(!control_root.enableEditPanel) {
-                                    input.forceActiveFocus()
-                                    control_root.editStart()
+                                    input.forceActiveFocus();
+                                    control_root.editStart();
                                 } else {
-                                    control_root.editStart()
-                                    control_root.showCustomEditPanel(control_root.name, control_root.value)
+                                    control_root.editStart();
+                                    control_root.showCustomEditPanel(control_root.name, control_root.value);
                                 }
                             }
                         } else {
-                            mouse.accepted = false
+                            mouse.accepted = false;
                         }
                     }
                 }
@@ -414,9 +472,9 @@ Item {
                 function decreaseInEditMode() {
                     var numberStr, number;
                     if(input.text.length === 0) {
-                        numberStr = placeholder.text
+                        numberStr = placeholder.text;
                     } else {
-                        numberStr = input.text
+                        numberStr = input.text;
                     }
                     number = fixValue((valueFromText(numberStr) - step), precision);
                     if(number >= minimumValue) {
@@ -426,9 +484,9 @@ Item {
                 function increaseInEditMode() {
                     var numberStr, number;
                     if(input.text.length === 0) {
-                        numberStr = placeholder.text
+                        numberStr = placeholder.text;
                     } else {
-                        numberStr = input.text
+                        numberStr = input.text;
                     }
                     number = fixValue((valueFromText(numberStr) + step), precision);
                     if(number <= maximumValue) {
@@ -441,10 +499,10 @@ Item {
                 TextInput {
                     id: input
                     function fixInput() {
-                        var number = valueFromText(text)
+                        var number = valueFromText(text);
                         if(text.length === 0) return false;
                         if(number > maximumValue || number < minimumValue) {
-                            text = text.substring(0, text.length-1)
+                            text = text.substring(0, text.length-1);
                             //console.log("fix!")
                             return true;
                         }
@@ -452,7 +510,7 @@ Item {
                     }
                     property int counterToUpErrors: 0
                     property int counterToDownErrors: 0
-                    property int counterNumPutSymbols: 0                    
+                    property int counterNumPutSymbols: 0
                     anchors.fill: parent
                     anchors.rightMargin: 3
                     selectByMouse: true
@@ -473,33 +531,27 @@ Item {
                     }
                     Keys.onEscapePressed: {
                         input.counterNumPutSymbols = 0;
-                        input.text = ""
-                        display.forceActiveFocus()
-                        control_root.editEnd()
+                        input.text = "";
+                        display.forceActiveFocus();
+                        control_root.editEnd();
                     }
                     Keys.onSpacePressed: {
                         if(input.text.length === 0) {
-                            input.text = placeholder.text
+                            input.text = placeholder.text;
                         } else {
-                            input.text = ""
+                            input.text = "";
                         }
                     }
                     Keys.onReleased: {
-                        if(event.key === Qt.Key_M) {
-                            if(memory !== undefined)
-                                input.text = textFromValue(memory, precision);
-
-                        } else if(event.key === Qt.Key_S) {
-                            if(input.text.length > 0) {
-                                memory = valueFromText(input.text);
-                            }
+                        if(event.key === Qt.Key_M && memory !== undefined) {
+                            input.text = textFromValue(memory, precision);
                         } else if(event.key === Qt.Key_C) {
-                            input.text = ""
+                            input.text = "";
                         } else if(event.key === 46 || event.key === 44) {
                             if(getSystemLocaleDecimalChar() === ',' && event.key === 46) {
-                                input.insert(input.cursorPosition, ',')
+                                input.insert(input.cursorPosition, ',');
                             } else if(getSystemLocaleDecimalChar() === '.' && event.key === 44) {
-                                input.insert(input.cursorPosition, '.')
+                                input.insert(input.cursorPosition, '.');
                             }
                         }
                         //console.log("Key "+/*String.fromCharCode*/(event.key)+" pressed")
@@ -511,18 +563,18 @@ Item {
                         if(number > maximumValue) {
                             ++counterToUpErrors;
                             if(counterToUpErrors < 2) {
-                                text = text.substring(0,text.length-1)
+                                text = text.substring(0,text.length-1);
                             } else {
                                 counterToUpErrors = 0;
-                                text = textFromValue(maximumValue, precision)
+                                text = textFromValue(maximumValue, precision);
                             }
                         } else if(number < minimumValue) {
                             ++counterToDownErrors;
                             if(counterToDownErrors < 2) {
-                                text = text.substring(0,text.length-1)
+                                text = text.substring(0, text.length-1);
                             } else {
                                 counterToDownErrors = 0;
-                                text = textFromValue(minimumValue, precision)
+                                text = textFromValue(minimumValue, precision);
                             }
                         }
                         counterNumPutSymbols += 1;
@@ -532,14 +584,14 @@ Item {
                     }
                     onEditingFinished: {
                         counterNumPutSymbols = 0;
-                        valueEditFinisher()
+                        valueEditFinisher();
                     }
                     MouseArea {
                         anchors.fill: parent
                         onClicked: {
                             input.counterNumPutSymbols = 0;
-                            display.forceActiveFocus()
-                            control_root.editEnd()                            
+                            display.forceActiveFocus();
+                            control_root.editEnd();
                         }
                     }
                 }
@@ -659,11 +711,11 @@ Item {
                 id: btUpMouseArea
                 anchors.fill: parent
                 onPressed: {
-                    pressedUp = true
+                    pressedUp = true;
                 }
                 onReleased: {
-                    pressedUp = false
-                    increase()
+                    pressedUp = false;
+                    increase();
                 }
             }
         }
@@ -701,14 +753,14 @@ Item {
                 verticalAlignment: Text.AlignVCenter
             }
             MouseArea {
-                id: btDownMouseArea                
+                id: btDownMouseArea
                 anchors.fill: parent
                 onPressed: {
-                    pressedDown = true
+                    pressedDown = true;
                 }
                 onReleased: {
-                    pressedDown = false
-                    decrease()
+                    pressedDown = false;
+                    decrease();
                 }
             }
         }

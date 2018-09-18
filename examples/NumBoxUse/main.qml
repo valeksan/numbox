@@ -15,110 +15,47 @@ ApplicationWindow {
         ColumnLayout {
             Layout.alignment: Qt.AlignHCenter
             spacing: 10
-            Components.NumBox {
-                id: superRealSpinBox // :)
-                height: 45
-                width: 200
-                value: 0.0
-                buttonsAlignType: 2
-                precision: precision_setter.value
-                minimumValue: 0.0
-                maximumValue: 104.75
-                enableSequenceGrid: chkEnableSeqGrid.checked //
-                step: step_setter.value
-                editable: chkEditable.checked                
-                suffix: " dB"
-                fixed: chkFixedZeros.checked
-                decimals: decimals_setter.value
-                decorateBorders: chkDecorateBorders.checked
-                memory: 3.8
-                doubleClickEdit: chk2click.checked
-                widthButtons: 45
-                onFinishEdit: {
-                    // если так не написать, ничего не будет изменяться!
-                    value = number
+            Item {
+                height: 75
+                width: 600
+                Text {
+                    text:"экспонат (не весь функционал реализован в примере! см. код контрола)"
+                    anchors.top: parent.top
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    height: 15
                 }
-            }
-            CheckBox {
-                id: chkFixedZeros
-                text: "Фиксированное отображение нулей"
-                checked: false
-            }
-            Row {
-                spacing: 15
-                Label {
-                    text:"Количество отображаемых чисел:"
-                    verticalAlignment: "AlignVCenter"
-                    height: parent.height
-                }
-                SpinBox {
-                    id: decimals_setter
-                    from: 0
-                    to: 10
-                    value: 0
-                }
-            }
-            Row {
-                spacing: 15
-                Label {
-                    text:"Точность:"
-                    verticalAlignment: "AlignVCenter"
-                    height: parent.height
-                }
-                SpinBox {
-                    id: precision_setter
-                    from: 0
-                    to: 10
-                    value: 0
-                }
-            }
-            Row {
-                spacing: 15
-                Label {
-                    text:"Шаг:"
-                    verticalAlignment: "AlignVCenter"
-                    height: parent.height
-                }
-                Components.NumBox {
-                    id: step_setter // установщик шага
-                    height: 45
-                    width: 200
-                    value: 0.05
-                    buttonsAlignType: 1
-                    precision: precision_setter.value
-                    minimumValue: 0.0
-                    maximumValue: 100.0
-                    step: Math.pow(10,-(precision))
-                    editable: true
-                    fixed: true
-                    //decorateBorders: chkDecorateBorders.checked
-                    //doubleClickEdit: chk2click.checked
-                    widthButtons: 45
-                    onFinishEdit: {
-                        value = number
+                Rectangle {
+                    border.width: 1
+                    border.color: "black"
+                    anchors.fill: parent
+                    anchors.topMargin: 15
+                    Components.NumBox {
+                        id: superRealSpinBox // :)
+                        height: 45
+                        width: 200
+                        value: 0.0
+                        buttonsAlignType: 2
+                        precision: precision_setter.value
+                        minimumValue: 0.0
+                        maximumValue: 104.75
+                        enableSequenceGrid: chkEnableSeqGrid.checked //
+                        step: step_setter.value
+                        editable: chkEditable.checked
+                        suffix: " dB"
+                        fixed: chkFixedZeros.checked
+                        decimals: decimals_setter.value
+                        decorateBorders: chkDecorateBorders.checked
+                        memory: 3.8
+                        doubleClickEdit: chk2click.checked
+                        widthButtons: 45
+                        onFinishEdit: {
+                            // если так не написать, ничего не будет изменяться!
+                            value = number
+                        }
+                        anchors.centerIn: parent
                     }
                 }
-            }
-
-            CheckBox {
-                id: chkDecorateBorders
-                text: "Окантовка"
-                checked: true
-            }
-
-            CheckBox {
-                id: chkEnableSeqGrid
-                text: "Включить привязку к сетке шага "+superRealSpinBox.step.toString()+" (можно поменять в коде)"
-                checked: false
-            }
-            CheckBox {
-                id: chkEditable
-                text: "Включить редактирование"
-                checked: true
-            }
-            CheckBox {
-                id: chk2click
-                text: "Редактирование по двойному клику"
             }
             Text {
                 text: "Варианты расположения кнопок:"
@@ -126,7 +63,7 @@ ApplicationWindow {
             ButtonGroup {
                 buttons: groupNumBoxTypes.children
             }
-            Column {
+            Row {
                 id: groupNumBoxTypes
                 RadioButton {
                     text: "0"
@@ -160,6 +97,87 @@ ApplicationWindow {
                     }
                 }
             }
+            CheckBox {
+                id: chkDecorateBorders
+                text: "Окантовка"
+                checked: true
+            }
+            CheckBox {
+                id: chkFixedZeros
+                text: "Фиксированное отображение нулей"
+                checked: true
+            }
+            Row {
+                spacing: 15
+                Label {
+                    text:"Количество отображаемых чисел после запятой (0-10):"
+                    verticalAlignment: "AlignVCenter"
+                    height: parent.height
+                }
+                SpinBox {
+                    id: decimals_setter
+                    from: 0
+                    to: 10
+                    value: 2
+                }
+            }
+            Row {
+                spacing: 15
+                Label {
+                    text:"Точность (0-10):"
+                    verticalAlignment: "AlignVCenter"
+                    height: parent.height
+                }
+                SpinBox {
+                    id: precision_setter
+                    from: 0
+                    to: 10
+                    value: 2
+                }
+            }
+            Row {
+                spacing: 15
+                Label {
+                    text:"Шаг (используется наш контрол):"
+                    verticalAlignment: "AlignVCenter"
+                    height: parent.height
+                }
+                Components.NumBox {
+                    id: step_setter // установщик шага
+                    height: 45
+                    width: 200
+                    value: 0.05
+                    buttonsAlignType: superRealSpinBox.buttonsAlignType
+                    precision: precision_setter.value
+                    minimumValue: 0.0
+                    maximumValue: 100.0
+                    step: Math.pow(10,-(precision))
+                    editable: true
+                    fixed: true
+                    //decorateBorders: chkDecorateBorders.checked
+                    //doubleClickEdit: chk2click.checked
+                    widthButtons: 45
+                    onFinishEdit: {
+                        value = number
+                    }
+                }
+            }
+
+            CheckBox {
+                id: chkEnableSeqGrid
+                text: "Включить привязку к сетке шага "+superRealSpinBox.step.toString()+" (можно поменять в коде)"
+                checked: false
+            }
+            CheckBox {
+                id: chkEditable
+                text: "Включить редактирование"
+                checked: true
+            }
+            CheckBox {
+                id: chk2click
+                text: "Редактирование по двойному клику"
+            }
+
         }
     }
 }
