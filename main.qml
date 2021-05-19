@@ -33,7 +33,6 @@ ApplicationWindow {
                         height: 45
                         width: 200
                         value: 0.0
-                        buttonsAlignType: 2
                         precision: precision_setter.value
                         minimumValue: 0.0
                         maximumValue: 104.75
@@ -42,11 +41,9 @@ ApplicationWindow {
                         editable: chkEditable.checked
                         suffix: " dB"
                         fixed: chkFixedZeros.checked
-                        decimals: decimals_setter.value
-                        decorateBorders: chkDecorateBorders.checked
+                        decimalPlaces: decimals_setter.value
                         memory: 3.8
                         doubleClickEdit: chk2click.checked
-                        widthButtons: 45
                         onFinishEdit: {
                             value = number; // если так не написать, ничего не будет изменяться!
                         }
@@ -54,56 +51,7 @@ ApplicationWindow {
                     }
                 }
             }
-            Text {
-                text: "Варианты расположения кнопок:"
-            }
-            ButtonGroup {
-                buttons: groupNumBoxTypes.children
-            }
-            Row {
-                id: groupNumBoxTypes
-                RadioButton {
-                    text: "0"
-                    onCheckedChanged: {
-                        if (checked === true)
-                            superRealSpinBox.buttonsAlignType = 0;
-                    }
-                }
-                RadioButton {
-                    text: "1"
-                    onCheckedChanged: {
-                        if (checked === true)
-                            superRealSpinBox.buttonsAlignType = 1;
-                    }
-                }
-                RadioButton {
-                    text: "2"
-                    checked: true
-                    onCheckedChanged: {
-                        if (checked === true)
-                            superRealSpinBox.buttonsAlignType = 2;
-                    }
-                }
-                RadioButton {
-                    text: "3"
-                    onCheckedChanged: {
-                        if (checked === true)
-                            superRealSpinBox.buttonsAlignType = 3;
-                    }
-                }
-                RadioButton {
-                    text: "4"
-                    onCheckedChanged: {
-                        if (checked === true)
-                            superRealSpinBox.buttonsAlignType = 4;
-                    }
-                }
-            }
-            CheckBox {
-                id: chkDecorateBorders
-                text: "Окантовка"
-                checked: true
-            }
+
             CheckBox {
                 id: chkFixedZeros
                 text: "Фиксированное отображение нулей"
@@ -149,16 +97,12 @@ ApplicationWindow {
                     height: 45
                     width: 200
                     value: 0.05
-                    buttonsAlignType: superRealSpinBox.buttonsAlignType
                     precision: precision_setter.value
                     minimumValue: 0.0
                     maximumValue: 100.0
                     step: Math.pow(10, -(precision))
                     editable: true
                     fixed: true
-                    //decorateBorders: chkDecorateBorders.checked
-                    //doubleClickEdit: chk2click.checked
-                    widthButtons: 45
                     onFinishEdit: {
                         value = number;
                     }

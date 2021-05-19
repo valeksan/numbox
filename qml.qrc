@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>qtquickcontrols2.conf</file>
         <file>NumBox.qml</file>
+        <file>NumBoxForm.ui.qml</file>
     </qresource>
 </RCC>
