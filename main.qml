@@ -1,15 +1,3 @@
-# numbox
-Qt5 QML QtQuick2 handmade float edit spin control, alternate SpinBox control for float type.
-
-#### 21.10.2017
-Complete reworking of the functional.
-
-#### 19.05.2021
-Refactory javascript (syntax and view).
-
-
-## Example code:
-```qml
 import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.3
@@ -195,5 +183,3 @@ ApplicationWindow {
         }
     }
 }
-
-```
