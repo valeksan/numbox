@@ -1,4 +1,4 @@
-# numbox
+# NumBox QML Control
 The alternate SpinBox control for double type.
 
 #### 21.10.2017
