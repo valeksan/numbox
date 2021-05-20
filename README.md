@@ -141,4 +141,23 @@ ApplicationWindow {
         }
     }
 }
+
+/*
+    Внимание! Чтобы контрол работал, необходимо прописать слот на сигнал finishEdit(number)
+    Пример:
+        NumBox {
+            value: 0
+            // ...
+            onFinishEdit: {
+                control_root.value = number;
+            }
+        }
+    Можно также переопределить метод отображения контрола, добавив внутри него следующее:
+        Component.onCompleted: {
+            displayTextValue = Qt.binding(function() {
+                return (prefix + value/60+":"+(value%60<10?"0"+value%60:value%60) + suffix); // для того чтобы отобразить время в минутах и секундах
+            });
+        }
+        editable: true // чаще всего все это требуется с этим параметром - без ввода (но это не точно, как вам угодно)
+*/
 ```

@@ -34,6 +34,7 @@ NumBoxForm {
     property bool doubleClickEdit: false    // Опция. Редактировать только при двойном клике (если включен параметр editable)
     property bool enableEditPanel: false    /* Опция: Отправка сигнала showCustomEditPanel начала редактирования вместо редактирования
                                                          (например если имеется своя виртуальная клавиатура ввода, если включен параметр editable) */
+    property string displayTextValue: viewRegimeMethods.getDisplayValueString()
 
     // Функциональные сигналы
     signal finishEdit(double number);       /* Сигнал на изменение хранимого реального значения.
@@ -142,7 +143,7 @@ NumBoxForm {
     }
 
     // Настройка displayText:
-    displayText.text: viewRegimeMethods.getDisplayValueString()
+    displayText.text: displayTextValue
     displayTextMouseArea.onClicked: {
         control.clicked(mouse);
         if (!control.doubleClickEdit) {
