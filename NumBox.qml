@@ -30,7 +30,7 @@ NumBoxForm {
     property bool visibleSuffixInEdit: true     // показывать "суфикс" при редактировании
 
     // Функциональные параметры
-    property bool editable: false           // Включить возможность ввода с клавиатуры
+    property bool editable: false           // Включить возможность ввода
     property bool doubleClickEdit: false    // Опция. Редактировать только при двойном клике (если включен параметр editable)
     property bool enableEditPanel: false    /* Опция: Отправка сигнала showCustomEditPanel начала редактирования вместо редактирования
                                                          (например если имеется своя виртуальная клавиатура ввода, если включен параметр editable) */
@@ -46,9 +46,9 @@ NumBoxForm {
     signal up();                            // Сигнал посылается при прокручивании колеса мыши
     signal down();                          // Сигнал посылается при прокручивании колеса мыши
 
-    //state: "view"
+    //state: "edit" // для просмотра состояний в дизайнере ("view"/"edit") - не используется в рабочем состоянии
     padding: 3
-    wheelEnabled: true
+    wheelEnabled: editable
 
     background: Rectangle {
         opacity: enabled ? 1 : 0.3

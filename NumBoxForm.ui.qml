@@ -26,6 +26,7 @@ Control {
             verticalAlignment: "AlignVCenter"
             horizontalAlignment: "AlignHCenter"
             visible: !inputText.activeFocus
+            text: ""
 
             anchors.fill: parent
 
@@ -44,6 +45,7 @@ Control {
             verticalAlignment: "AlignVCenter"
             horizontalAlignment: "AlignHCenter"
 
+            text: ""
             anchors.fill: parent
 
             MouseArea {
@@ -55,6 +57,7 @@ Control {
         Label {
             id: placeholderText
 
+            text: "0,00"
             opacity: 0.4
             visible: inputText.visible && inputText.text.length === 0
             horizontalAlignment: Qt.AlignHCenter
@@ -64,6 +67,7 @@ Control {
         Label {
             id: sufInfoInEdit
 
+            text: "USD"
             visible: visibleSuffixInEdit ? inputText.visible : false
             verticalAlignment: Qt.AlignVCenter
 
@@ -80,6 +84,17 @@ Control {
             PropertyChanges {
                 target: displayText
                 visible: true
+                text: "0,00 USD"
+            }
+            PropertyChanges {
+                target: sufInfoInEdit
+                visible: false
+                text: ""
+            }
+            PropertyChanges {
+                target: inputText
+                visible: false
+                text: ""
             }
         },
         State {
@@ -87,6 +102,35 @@ Control {
             PropertyChanges {
                 target: displayText
                 visible: false
+                text: ""
+            }
+            PropertyChanges {
+                target: inputText
+                visible: true
+                text: "0,00"
+            }
+            PropertyChanges {
+                target: sufInfoInEdit
+                visible: true
+                text: "USD"
+            }
+        },
+        State {
+            name: "editNull"
+            PropertyChanges {
+                target: displayText
+                visible: false
+                text: ""
+            }
+            PropertyChanges {
+                target: inputText
+                text: ""
+                visible: true
+            }
+            PropertyChanges {
+                target: sufInfoInEdit
+                visible: true
+                text: "USD"
             }
         }
     ]
