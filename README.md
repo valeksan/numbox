@@ -161,3 +161,5 @@ ApplicationWindow {
         editable: true // чаще всего все это требуется с этим параметром - без ввода (но это не точно, как вам угодно)
 */
 ```
+![Example - in view mode](https://github.com/valeksan/numbox/raw/master/scr_1.png "scr_1.png")
+![Example - in input mode](https://github.com/valeksan/numbox/raw/master/scr_2.png "scr_2.png")
