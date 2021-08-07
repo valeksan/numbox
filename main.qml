@@ -6,7 +6,7 @@ ApplicationWindow {
     visible: true
     width: 1000
     height: 900
-    title: "Пример"
+    title: "Example to use"
 
     RowLayout {
         anchors.fill: parent
@@ -17,7 +17,7 @@ ApplicationWindow {
                 height: 75
                 width: 600
                 Text {
-                    text: "экспонат (не весь функционал реализован в примере! см. код контрола)"
+                    text: "exhibit (not all functionality is implemented in the example! see control code)"
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.leftMargin: 10
@@ -45,22 +45,21 @@ ApplicationWindow {
                         memory: 3.8
                         doubleClickEdit: chk2click.checked
                         onFinishEdit: {
-                            value = number; // если так не написать, ничего не будет изменяться!
+                            value = number; // if you don't write that, nothing will change!
                         }
                         anchors.centerIn: parent
                     }
                 }
             }
-
             CheckBox {
                 id: chkFixedZeros
-                text: "Фиксированное отображение нулей"
+                text: "Fixed display of zeros"
                 checked: true
             }
             Row {
                 spacing: 15
                 Label {
-                    text:"Количество отображаемых чисел после запятой (0 - 10):"
+                    text: "Displayed numbers after the decimal point (0 - 10):"
                     verticalAlignment: "AlignVCenter"
                     height: parent.height
                 }
@@ -74,7 +73,7 @@ ApplicationWindow {
             Row {
                 spacing: 15
                 Label {
-                    text: "Точность (0 - 10):"
+                    text: "Accuracy (0 - 10):"
                     verticalAlignment: "AlignVCenter"
                     height: parent.height
                 }
@@ -88,12 +87,12 @@ ApplicationWindow {
             Row {
                 spacing: 15
                 Label {
-                    text: "Шаг (используется наш контрол):"
+                    text: "Step (our control is used):"
                     verticalAlignment: "AlignVCenter"
                     height: parent.height
                 }
                 NumBox {
-                    id: step_setter // установщик шага
+                    id: step_setter // step installer
                     height: 45
                     width: 200
                     value: 0.05
@@ -108,22 +107,20 @@ ApplicationWindow {
                     }
                 }
             }
-
             CheckBox {
                 id: chkEnableSeqGrid
-                text: "Включить привязку к сетке шага " + superRealSpinBox.step.toString() + " (можно поменять в коде)"
+                text: "Enable Snap to Step Grid " + superRealSpinBox.step.toString() + " (can be changed in the code)"
                 checked: false
             }
             CheckBox {
                 id: chkEditable
-                text: "Включить редактирование"
+                text: "Enable editing"
                 checked: true
             }
             CheckBox {
                 id: chk2click
-                text: "Редактирование по двойному клику"
+                text: "Double click editing (Optional)"
             }
-
         }
     }
 }

@@ -57,7 +57,6 @@ Control {
         Label {
             id: placeholderText
 
-            text: "0,00"
             opacity: 0.4
             visible: inputText.visible && inputText.text.length === 0
             horizontalAlignment: Qt.AlignHCenter
@@ -67,7 +66,6 @@ Control {
         Label {
             id: sufInfoInEdit
 
-            text: "USD"
             visible: visibleSuffixInEdit ? inputText.visible : false
             verticalAlignment: Qt.AlignVCenter
 
@@ -84,7 +82,7 @@ Control {
             PropertyChanges {
                 target: displayText
                 visible: true
-                text: "0,00 USD"
+                text: "0.00 USD"
             }
             PropertyChanges {
                 target: sufInfoInEdit

@@ -20,7 +20,7 @@ ApplicationWindow {
     visible: true
     width: 1000
     height: 900
-    title: "Пример"
+    title: "Example to use"
 
     RowLayout {
         anchors.fill: parent
@@ -31,7 +31,7 @@ ApplicationWindow {
                 height: 75
                 width: 600
                 Text {
-                    text: "экспонат (не весь функционал реализован в примере! см. код контрола)"
+                    text: "exhibit (not all functionality is implemented in the example! see control code)"
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.leftMargin: 10
@@ -59,22 +59,21 @@ ApplicationWindow {
                         memory: 3.8
                         doubleClickEdit: chk2click.checked
                         onFinishEdit: {
-                            value = number; // если так не написать, ничего не будет изменяться!
+                            value = number; // if you don't write that, nothing will change!
                         }
                         anchors.centerIn: parent
                     }
                 }
             }
-
             CheckBox {
                 id: chkFixedZeros
-                text: "Фиксированное отображение нулей"
+                text: "Fixed display of zeros"
                 checked: true
             }
             Row {
                 spacing: 15
                 Label {
-                    text:"Количество отображаемых чисел после запятой (0 - 10):"
+                    text: "Displayed numbers after the decimal point (0 - 10):"
                     verticalAlignment: "AlignVCenter"
                     height: parent.height
                 }
@@ -88,7 +87,7 @@ ApplicationWindow {
             Row {
                 spacing: 15
                 Label {
-                    text: "Точность (0 - 10):"
+                    text: "Accuracy (0 - 10):"
                     verticalAlignment: "AlignVCenter"
                     height: parent.height
                 }
@@ -102,12 +101,12 @@ ApplicationWindow {
             Row {
                 spacing: 15
                 Label {
-                    text: "Шаг (используется наш контрол):"
+                    text: "Step (our control is used):"
                     verticalAlignment: "AlignVCenter"
                     height: parent.height
                 }
                 NumBox {
-                    id: step_setter // установщик шага
+                    id: step_setter // step installer
                     height: 45
                     width: 200
                     value: 0.05
@@ -122,44 +121,51 @@ ApplicationWindow {
                     }
                 }
             }
-
             CheckBox {
                 id: chkEnableSeqGrid
-                text: "Включить привязку к сетке шага " + superRealSpinBox.step.toString() + " (можно поменять в коде)"
+                text: "Enable Snap to Step Grid " + superRealSpinBox.step.toString() + " (can be changed in the code)"
                 checked: false
             }
             CheckBox {
                 id: chkEditable
-                text: "Включить редактирование"
+                text: "Enable editing"
                 checked: true
             }
             CheckBox {
                 id: chk2click
-                text: "Редактирование по двойному клику"
+                text: "Double click editing (Optional)"
             }
-
         }
     }
 }
-
-/*
-    Внимание! Чтобы контрол работал, необходимо прописать слот на сигнал finishEdit(number)
-    Пример:
-        NumBox {
-            value: 0
-            // ...
-            onFinishEdit: {
-                control_root.value = number;
-            }
-        }
-    Можно также переопределить метод отображения контрола, добавив внутри него следующее:
-        Component.onCompleted: {
-            displayTextValue = Qt.binding(function() {
-                return (prefix + value/60+":"+(value%60<10?"0"+value%60:value%60) + suffix); // для того чтобы отобразить время в минутах и секундах
-            });
-        }
-        editable: true // чаще всего все это требуется с этим параметром - без ввода (но это не точно, как вам угодно)
-*/
 ```
+
+## Important notes
+Attention! For the control to work, you need to register a slot for the finishEdit(number) signal, example:
+```qml
+NumBox {
+    value: 0 // old value
+    // ...
+    // connection for save value after edit
+    onFinishEdit: {
+        control_root.value = number; // set new value
+    }
+}
+```
+
+## Additional features:
+You can also override the control display method by adding the following inside it, example: 
+```qml
+NumBox {
+    //...
+    Component.onCompleted: {
+        displayTextValue = Qt.binding(function() {
+            return (prefix + value/60+":"+(value%60<10?"0"+value%60:value%60) + suffix); // to display the time in minutes and seconds 
+        });
+    }
+    editable: true // most often all this is required with this parameter - no input (but it's not exactly as you wish)
+}
+```
+
 ![Example - in view mode](https://github.com/valeksan/numbox/raw/master/scr_1.png "scr_1.png")
 ![Example - in input mode](https://github.com/valeksan/numbox/raw/master/scr_2.png "scr_2.png")
