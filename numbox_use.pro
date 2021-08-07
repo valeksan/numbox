@@ -28,6 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 DISTFILES += \
     NumBox.qml \
+    NumBoxForm.ui.qml \
     NumBoxOld.qml \
     README.md \
     main.qml

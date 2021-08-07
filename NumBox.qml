@@ -17,34 +17,61 @@ NumBoxForm {
     property double to: 3.40282e+038/2.0    /* Valid maximum limit (inclusive) */
     property alias maximumValue: control.to
     property bool fixed: false              /* Show extra zeros in fractional parts for precision */
+    // ------------------------------------------------------------------------
 
     // Display settings
-    property string suffix: ""              /* The text that follows immediately after the output of the number (for example, you can specify the unit of measurement) */
-    property string prefix: ""              /* The text that comes immediately before the output of the number */
-    property bool strongIntegerPartOfNumber: false  /* Increase the boldness of the integer part of the number in the textual representation */
-    property color colorMainPartOfValue: "transparent"              /* Color of the whole part */
-    property color colorFractionPartOfValue: "transparent"          /* Fractional color */
-    property color colorDotePartOfValue: colorFractionPartOfValue   /* Point color (defaults to the color of the fractional part) */
-    property color colorSuffix: "black"                             /* Suffix text color */
-    property color colorPrefix: "transparent"                       /* Prefix text color */
-    property bool visibleSuffixInEdit: true /* Show suffix when editing */
+    property string suffix: "" /* The text that follows immediately
+        after the output of the number
+        (for example, you can specify the unit of measurement) */
+
+    property string prefix: "" /* The text that comes immediately
+        before the output of the number */
+
+    property bool strongIntegerPartOfNumber: false /* Increase the boldness
+        of the integer part of the number in the textual representation */
+
+    property color colorMainPartOfValue: "transparent" /* Color of the whole part */
+    property color colorFractionPartOfValue: "transparent" /* Fractional color */
+    property color colorDotePartOfValue: colorFractionPartOfValue /* Point color
+        (defaults to the color of the fractional part) */
+
+    property color colorSuffix: "black"         /* Suffix text color */
+    property color colorPrefix: "transparent"   /* Prefix text color */
+    property bool visibleSuffixInEdit: true     /* Show suffix when editing */
 
     // Functional settings
     property bool editable: false           /* Enable input capability */
-    property bool doubleClickEdit: false    /* Option. Edit only on double click (if editable is enabled) */
-    property bool enableEditPanel: false    /* Option. Sending the showCustomEditPanel signal to start editing instead of editing (for example, if you have your own virtual keyboard for input, if the editable parameter is enabled) */
-    property string displayTextValue: viewRegimeMethods.getDisplayValueString() /* You can override the display method */
-    //state: "edit"                         /* To view states in the designer ("view" / "edit") - not used in working state */
+    property bool doubleClickEdit: false    /* Option.
+        Edit only on double click (if editable is enabled) */
+
+    property bool enableEditPanel: false    /* Option.
+        Sending the showCustomEditPanel signal to start editing instead of editing
+        (for example, if you have your own virtual keyboard for input,
+        if the editable parameter is enabled) */
+
+    property string displayTextValue: viewRegimeMethods.getDisplayValueString() /*
+        You can override the display method */
+
+    state: "" /* To view states in the designer ("view" / "edit")
+        - not used in working state */
+    // ------------------------------------------------------------------------
 
     // Functional signals
-    signal finishEdit(double number);       /* Signal to change the stored real value. Comment out or override the onFinishEdit handler (if the signal should be processed in a special way) */
-    signal showCustomEditPanel(string name, double current); /* Signal for the needs of the connection to your input keyboard (for communication: control name, current value) */
-    signal clicked(QtObject mouse);         /* The signal is sent when you click on the control */
-    signal doubleClicked(QtObject mouse);   /* The signal is sent when you double click on the control */
-    signal editStart();                     /* Signal start editing from the keyboard */
-    signal editEnd();                       /* Signal of the end of editing from the keyboard */
-    signal up();                            /* Signal is sent when the mouse wheel is scrolled up */
-    signal down();                          /* Signal is sent when the mouse wheel is scrolled down */
+    signal finishEdit(double number);       /* Signal to change the stored real value.
+        Comment out or override the onFinishEdit handler
+        (if the signal should be processed in a special way) */
+
+    signal showCustomEditPanel(string name, double current); /*
+        Signal for the needs of the connection to your input keyboard
+        (for communication: control name, current value) */
+
+    signal clicked(QtObject mouse); /* The signal is sent when you click on the control */
+    signal doubleClicked(QtObject mouse); /* The signal is sent when you double click on the control */
+    signal editStart(); /* Signal start editing from the keyboard */
+    signal editEnd();   /* Signal of the end of editing from the keyboard */
+    signal up();        /* Signal is sent when the mouse wheel is scrolled up */
+    signal down();      /* Signal is sent when the mouse wheel is scrolled down */
+    // ------------------------------------------------------------------------
 
     padding: 3
     wheelEnabled: editable
@@ -86,6 +113,7 @@ NumBoxForm {
             }
         }
     }
+    // ------------------------------------------------------------------------
 
     // Clipboard implementation
     TextEdit {
@@ -119,6 +147,7 @@ NumBoxForm {
             return "";
         }
     }
+    // ------------------------------------------------------------------------
 
     // Mouse wheel handling
     MouseArea {
@@ -139,6 +168,7 @@ NumBoxForm {
             }
         }
     }
+    // ------------------------------------------------------------------------
 
     // Setting displayText
     displayText.text: displayTextValue
@@ -176,6 +206,7 @@ NumBoxForm {
             mouse.accepted = false;
         }
     }
+    // ------------------------------------------------------------------------
 
     // Setting up inputText
     inputTextMouseArea.onClicked: {
@@ -220,12 +251,15 @@ NumBoxForm {
         inputRegimeMethods.counterNumPutSymbols = 0;
         inputRegimeMethods.valueEditFinisher();
     }
+    // ------------------------------------------------------------------------
 
     // Setting placeholderText
     placeholderText.text: controlInMethods.textFromValue(value, precision)
+    // ------------------------------------------------------------------------
 
     // Setting sufInfoInEdit
     sufInfoInEdit.text: control.suffix
+    // ------------------------------------------------------------------------
 
     // Handling keyboard keys in input mode
     Keys.onEscapePressed: {
@@ -251,6 +285,16 @@ NumBoxForm {
             }
         }
     }
+    // ------------------------------------------------------------------------
+
+    // Signal handlers (default, can be overridden)
+    onUp: {
+        viewRegimeMethods.increase();
+    }
+    onDown: {
+        viewRegimeMethods.decrease();
+    }
+    // ------------------------------------------------------------------------
 
     QtObject {
         id: controlInMethods
@@ -457,14 +501,6 @@ NumBoxForm {
             }
             return "";
         }
-    }
-
-    // Signal handlers (default, can be overridden)
-    onUp: {
-        viewRegimeMethods.increase();
-    }
-    onDown: {
-        viewRegimeMethods.decrease();
     }
 
     // FIX_1: input correction handler (system)
